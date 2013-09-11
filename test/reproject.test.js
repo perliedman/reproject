@@ -2,7 +2,8 @@ var reproj = require('../'),
 	expect = require('expect.js'),
 	proj4node = require('proj4node');
 
-var sweref99tm = proj4node('+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+var sweref99tm = proj4node('+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'),
+	rt90 = proj4node('+lon_0=15.808277777799999 +lat_0=0.0 +k=1.0 +x_0=1500000.0 +y_0=0.0 +proj=tmerc +ellps=bessel +units=m +towgs84=414.1,41.3,603.1,-0.855,2.141,-7.023,0 +no_defs');
 
 // Simplistic shallow clone that will work for a normal GeoJSON object.
 function clone(obj) {
@@ -25,27 +26,29 @@ function isXY(list) {
 // `callback` should return `[x,y]` which will be added to the final result.
 // This is slower and more memory consuming then `transformInplace` but returns
 // a new `Array`.
-function assertCoords(actual, expected) {
+function assertCoords(actual, expected, precision) {
 	if (isXY(expected)) {
-  		expect(actual).to.be.coordinate(expected);
+  		expect(actual).to.be.coordinate(expected, precision);
   	} else {
 		expect(actual.length).to.be(expected.length);
 	  	for (var i = 0; i < expected.length; i++) {
-		  	assertCoords(actual[i], expected[i]);
+		  	assertCoords(actual[i], expected[i], precision);
 	    }
 	}
 }
 
-expect.Assertion.prototype.coordinate = function(obj) {
+expect.Assertion.prototype.coordinate = function(obj, precision) {
+	precision = precision || 1e-5;
+
 	this.assert(
 		this.obj.length == 2
-		&& Math.abs(this.obj[0] - obj[0]) < 1e-5
-		&& Math.abs(this.obj[1] - obj[1]) < 1e-5,
-		function() { return "expected " + this.obj + " to be a coordinate close to " + obj; },
-		function() { return "expected " + this.obj + " to not be a coordinate close to " + obj; });
+		&& Math.abs(this.obj[0] - obj[0]) < precision
+		&& Math.abs(this.obj[1] - obj[1]) < precision,
+		function() { return "expected " + this.obj + " to be a coordinate close to " + obj + " within +/-" + precision; },
+		function() { return "expected " + this.obj + " to not be a coordinate close to " + obj + " within +/-" + precision; });
 }
 
-expect.Assertion.prototype.geojson = function(obj) {
+expect.Assertion.prototype.geojson = function(obj, coordPrecision) {
 	var copyThis = clone(this.obj),
 		copyObj = clone(obj),
 		i;
@@ -61,19 +64,19 @@ expect.Assertion.prototype.geojson = function(obj) {
 
 	expect(copyThis).to.eql(copyObj);
 	if (obj.coordinates) {
-		assertCoords(this.obj.coordinates, obj.coordinates);
+		assertCoords(this.obj.coordinates, obj.coordinates, coordPrecision);
 	}
 	if (obj.geometry) {
-		expect(this.obj.geometry).to.be.geojson(obj.geometry);
+		expect(this.obj.geometry).to.be.geojson(obj.geometry, coordPrecision);
 	}
 	if (obj.geometries) {
 		for (i = 0; i < obj.geometries.length; i++) {
-			expect(this.obj.geometries[i]).to.be.geojson(obj.geometries[i]);
+			expect(this.obj.geometries[i]).to.be.geojson(obj.geometries[i], coordPrecision);
 		}
 	}
 	if (obj.features) {
 		for (i = 0; i < obj.features.length; i++) {
-			expect(this.obj.features[i]).to.be.geojson(obj.features[i]);
+			expect(this.obj.features[i]).to.be.geojson(obj.features[i], coordPrecision);
 		}
 	}
 }
@@ -197,3 +200,15 @@ describe('toWgs84', function() {
 		});
 	});
 });
+
+describe("reproject", function() {
+	it("epsg:3006->epsg:2400", function() {
+		expect(reproj.reproject({
+			"type": "Point",
+			"coordinates": [319180, 6399862]
+		}, sweref99tm, rt90)).to.be.geojson({
+			"type": "Point",
+			"coordinates": [1271138, 6404230]
+		}, 0.5);
+	});
+})
