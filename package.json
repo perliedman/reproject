@@ -2,6 +2,7 @@
   "name": "reproject",
   "version": "0.0.1",
   "description": "Reproject GeoJSON from one projection/CRS to another",
+  "repository": "git@github.com:perliedman/reproject.git",
   "main": "index.js",
   "scripts": {
     "test": "mocha -R spec"
@@ -18,7 +19,7 @@
   "author": "Per Liedman",
   "license": "MIT",
   "dependencies": {
-    "proj4js": "0.0.6",
+    "proj4node": "0.0.6",
     "minimist": "0.0.2",
     "concat-stream": "~1.0.1"
   },
