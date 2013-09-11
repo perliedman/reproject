@@ -1,10 +1,13 @@
 {
-  "name": "Projects",
-  "version": "0.0.0",
-  "description": "Reproject GeoJSON",
+  "name": "reproject",
+  "version": "0.0.1",
+  "description": "Reproject GeoJSON from one projection/CRS to another",
   "main": "index.js",
   "scripts": {
     "test": "mocha -R spec"
+  },
+  "bin": {
+    "reproject": "cli.js"
   },
   "keywords": [
     "geojson",
@@ -12,10 +15,12 @@
     "proj4",
     "maps"
   ],
-  "author": "Per Liedman <per.liedman@kartena.se>",
+  "author": "Per Liedman",
   "license": "MIT",
   "dependencies": {
-    "proj4node": "0.0.6"
+    "proj4js": "0.0.6",
+    "minimist": "0.0.2",
+    "concat-stream": "~1.0.1"
   },
   "devDependencies": {
     "expect.js": "~0.2.0",
