@@ -13,6 +13,12 @@ use:
 
     $ echo '{"type":"Point","coordinates":[319180, 6399862]}'| reproject --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326
 
+A sample file of CRS definitions, crs-defs.json, is supplied. It's contents is a dictionary of CRS names to Proj4 definitions.
+
+reproject can be used together with for example [wellknown](https://github.com/mapbox/wellknown/) and [geojsonio-cli](https://github.com/mapbox/geojsonio-cli/):
+
+    $ echo "POINT(319180 6399862)" | wellknown | reproject --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326 | geojsonio
+
 ## usage
 
 reproject currently only works with node.js, since proj4node, which reproject relies on, does not play nice with
