@@ -1,0 +1,19 @@
+{
+  "name": "Projects",
+  "version": "0.0.0",
+  "description": "Reproject GeoJSON",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "geojson",
+    "projection",
+    "proj4"
+  ],
+  "author": "Per Liedman <per.liedman@kartena.se>",
+  "license": "MIT",
+  "dependencies": {
+    "proj4node": "0.0.6"
+  }
+}
