@@ -4,16 +4,21 @@
   "description": "Reproject GeoJSON",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -R spec"
   },
   "keywords": [
     "geojson",
     "projection",
-    "proj4"
+    "proj4",
+    "maps"
   ],
   "author": "Per Liedman <per.liedman@kartena.se>",
   "license": "MIT",
   "dependencies": {
     "proj4node": "0.0.6"
+  },
+  "devDependencies": {
+    "expect.js": "~0.2.0",
+    "mocha": "~1.12.0"
   }
 }
