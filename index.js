@@ -17,7 +17,7 @@ function traverseCoords(coordinates, callback) {
 }
 
 // Simplistic shallow clone that will work for a normal GeoJSON object.
-function clone(geojson) {
+function clone(obj) {
   if (null == obj || "object" != typeof obj) return obj;
     var copy = obj.constructor();
     for (var attr in obj) {
@@ -32,6 +32,8 @@ function traverseGeoJson(geojson, callback) {
     r.geometry = traverseGeoJson(geojson.geometry, callback);
   } else if (geojson.type == 'FeatureCollection') {
     r.features = r.features.map(function(gj) { return traverseGeoJson(gj, callback); });
+  } else if (geojson.type == 'GeometryCollection') {
+    r.geometries = r.geometries.map(function(gj) { return traverseGeoJson(gj, callback); });
   } else {
     callback(r);
   }
@@ -59,7 +61,7 @@ function reproject(geojson, from, to) {
 
 module.exports = {
     detectProjection: detectProjection,
-    
+
     reproject: reproject,
 
     toWgs84: function(geojson, proj) {
