@@ -7,10 +7,6 @@ function isXY(list) {
     typeof list[1] === 'number';
 }
  
-// Move recursively through nested lists and call `callback` for each `[x,y]`.
-// `callback` should return `[x,y]` which will be added to the final result.
-// This is slower and more memory consuming then `transformInplace` but returns
-// a new `Array`.
 function traverseCoords(coordinates, callback) {
   if (isXY(coordinates)) return callback(coordinates);
   return coordinates.map(function(coord){return traverseCoords(coord, callback);});
@@ -41,17 +37,51 @@ function traverseGeoJson(geojson, callback) {
   return r;
 }
 
-function detectProjection(geojson) {
-  // TODO
-  return undefined;
-}
+function detectCrs(geojson, projs) {
+  var crsInfo = geojson['crs'],
+      name,
+      crs;
 
-function reproject(geojson, from, to) {
-  if (from === undefined) {
-    from = detectProjection(geojson);
+  if (crsInfo === undefined) {
+    throw new Error("Unable to detect CRS, GeoJSON has no \"crs\" property.");
   }
 
+  if (crsInfo.type == 'name') {
+    crs = projs[crsInfo.properties.name];
+  } else if (crsInfo.type == 'EPSG') {
+    crs = projs["EPSG:" + crsInfo.properties.code];
+  }
+
+  if (!crs) {
+    throw new Error("CRS defined in crs section could not be identified: " + JSON.stringify(crsInfo));
+  }
+
+  return crs;
+}
+
+function determineCrs(crs, projs) {
+  if (typeof crs == 'string' || crs instanceof String) {
+    return projs[crs];
+  }
+
+  return crs;
+}
+
+function reproject(geojson, from, to, projs) {
+  if (!from) {
+    from = detectCrs(geojson, projs);
+  } else {
+    from = determineCrs(from, projs);
+  }
+
+  to = determineCrs(to, projs);
+
   return traverseGeoJson(geojson, function(gj) {
+    // No easy way to put correct CRS info into the GeoJSON,
+    // and definitely wrong to keep the old, so delete it.
+    if (gj.crs) {
+      delete gj.crs;
+    }
     gj.coordinates = traverseCoords(gj.coordinates, function(xy) {
       var coord = to.transform(from, { x:xy[0], y:xy[1] });
       return [ coord.x, coord.y ];
@@ -60,7 +90,7 @@ function reproject(geojson, from, to) {
 }
 
 module.exports = {
-    detectProjection: detectProjection,
+    detectCrs: detectCrs,
 
     reproject: reproject,
 

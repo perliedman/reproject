@@ -3,7 +3,11 @@ var reproj = require('../'),
 	proj4node = require('proj4node');
 
 var sweref99tm = proj4node('+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'),
-	rt90 = proj4node('+lon_0=15.808277777799999 +lat_0=0.0 +k=1.0 +x_0=1500000.0 +y_0=0.0 +proj=tmerc +ellps=bessel +units=m +towgs84=414.1,41.3,603.1,-0.855,2.141,-7.023,0 +no_defs');
+	rt90 = proj4node('+lon_0=15.808277777799999 +lat_0=0.0 +k=1.0 +x_0=1500000.0 +y_0=0.0 +proj=tmerc +ellps=bessel +units=m +towgs84=414.1,41.3,603.1,-0.855,2.141,-7.023,0 +no_defs'),
+	crss = {
+		"EPSG:3006": sweref99tm,
+		"EPSG:2400": rt90
+	};
 
 // Simplistic shallow clone that will work for a normal GeoJSON object.
 function clone(obj) {
@@ -201,6 +205,30 @@ describe('toWgs84', function() {
 	});
 });
 
+describe("detectCrs", function() {
+	it("fails on missing crs property", function() {
+		expect(function() {
+			reproj.detectCrs({
+				"type": "Point",
+				"coordinates": [319180, 6399862]
+			})
+		}).to.throwError();
+	});
+
+	it("detects named CRS", function() {
+		expect(reproj.detectCrs({
+			"type": "Point",
+			"coordinates": [319180, 6399862],
+			"crs": {
+				"type": "name",
+				"properties": {
+					"name": "EPSG:3006"
+				}
+			}
+		}, crss)).to.be(sweref99tm);
+	});
+});
+
 describe("reproject", function() {
 	it("epsg:3006->epsg:2400", function() {
 		expect(reproj.reproject({
@@ -211,4 +239,40 @@ describe("reproject", function() {
 			"coordinates": [1271138, 6404230]
 		}, 0.5);
 	});
-})
+
+	it("look up source crs by name", function() {
+		expect(reproj.reproject({
+			"type": "Point",
+			"coordinates": [319180, 6399862]
+		}, "EPSG:3006", rt90, crss)).to.be.geojson({
+			"type": "Point",
+			"coordinates": [1271138, 6404230]
+		}, 0.5);
+	});
+
+	it("look up destination crs by name", function() {
+		expect(reproj.reproject({
+			"type": "Point",
+			"coordinates": [319180, 6399862]
+		}, sweref99tm, "EPSG:2400", crss)).to.be.geojson({
+			"type": "Point",
+			"coordinates": [1271138, 6404230]
+		}, 0.5);
+	});
+
+	it("detect source crs from GeoJSON", function() {
+		expect(reproj.reproject({
+			"type": "Point",
+			"coordinates": [319180, 6399862],
+			"crs": {
+				"type": "name",
+				"properties": {
+					"name": "EPSG:3006"
+				}
+			}
+		}, null, "EPSG:2400", crss)).to.be.geojson({
+			"type": "Point",
+			"coordinates": [1271138, 6404230]
+		}, 0.5);
+	});
+});
