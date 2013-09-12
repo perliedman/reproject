@@ -276,3 +276,123 @@ describe("reproject", function() {
 		}, 0.5);
 	});
 });
+
+describe("reverse", function() {
+	describe('primitives', function() {
+		it('point', function() {
+			expect(reproj.reverse({
+				"type": "Point",
+				"coordinates": [319180, 6399862]
+			})).to.be.geojson({
+				"type": "Point",
+				"coordinates": [6399862, 319180]
+			});
+		});
+		it('linestring', function() {
+			expect(reproj.reverse({
+				"type": "LineString",
+				"coordinates": [[319180, 6399862], [319637, 6400617]]
+			})).to.be.geojson({
+				"type": "LineString",
+				"coordinates": [[6399862, 319180], [6400617, 319637]]
+			});
+		});
+		it('polygon', function() {
+			expect(reproj.reverse({
+				"type": "Polygon",
+				"coordinates": [[[319180, 6399862], [319637, 6400617], [319675, 6400239]]]
+			})).to.be.geojson({
+				"type": "Polygon",
+				"coordinates": [[[6399862, 319180], [6400617, 319637], [6400239, 319675]]]
+			});
+		});
+	});
+	describe('collections', function() {
+		it('geometrycollection', function() {
+			expect(reproj.reverse({
+				"type": "GeometryCollection",
+				"geometries": [
+					{
+						"type": "Point",
+						"coordinates": [319180, 6399862]
+					},
+					{
+						"type": "LineString",
+						"coordinates": [[319180, 6399862], [319637, 6400617]]
+					},
+					{
+						"type": "Polygon",
+						"coordinates": [[[319180, 6399862], [319637, 6400617], [319675, 6400239]]]
+					}
+				]
+			})).to.be.geojson({
+				"type": "GeometryCollection",
+				"geometries": [
+					{
+						"type": "Point",
+						"coordinates": [6399862, 319180]
+					},
+					{
+						"type": "LineString",
+						"coordinates": [[6399862, 319180], [6400617, 319637]]
+					},
+					{
+						"type": "Polygon",
+						"coordinates": [[[6399862, 319180], [6400617, 319637], [6400239, 319675]]]
+					}
+				]
+			});
+		});
+		it('featurecollection', function() {
+			expect(reproj.reverse({
+				"type": "FeatureCollection",
+				"features": [
+					{
+						type: "Feature",
+						attributes: {
+							"name": "Domkyrkan"
+						},
+						geometry: {
+							"type": "Point",
+							"coordinates": [319180, 6399862]
+						},
+					},
+					{
+						type: "Feature",
+						attributes: {
+							"name": "en linje"
+						},
+						geometry: {
+							"type": "LineString",
+							"coordinates": [[319180, 6399862], [319637, 6400617]]
+						},
+					}
+				]
+			})).to.be.geojson({
+				"type": "FeatureCollection",
+				"features": [
+					{
+						type: "Feature",
+						attributes: {
+							"name": "Domkyrkan"
+						},
+						geometry: {
+							"type": "Point",
+							"coordinates": [6399862, 319180]
+						},
+					},
+					{
+						type: "Feature",
+						attributes: {
+							"name": "en linje"
+						},
+						geometry: {
+							"type": "LineString",
+							"coordinates": [[6399862, 319180], [6400617, 319637]]
+						},
+					}
+				]
+			});
+		});
+	});
+});

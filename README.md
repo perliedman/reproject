@@ -11,13 +11,17 @@ install:
 
 use:
 
-    $ echo '{"type":"Point","coordinates":[319180, 6399862]}'| reproject --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326
+    $ echo '{"type":"Point","coordinates":[319180, 6399862]}' | reproject --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326
 
 A sample file of CRS definitions, crs-defs.json, is supplied. Its contents is a dictionary of CRS names to Proj4 definitions.
 
 reproject can be used together with for example [wellknown](https://github.com/mapbox/wellknown/) and [geojsonio-cli](https://github.com/mapbox/geojsonio-cli/):
 
     $ echo "POINT(319180 6399862)" | wellknown | reproject --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326 | geojsonio
+
+Sometimes your data has reversed the axis order such that x has become y and vice versa. reproject can help you get them in the correct order before transforming by using the **--reverse** argument:
+
+    $ echo '{"type":"Point","coordinates":[6399862, 319180]}' | reproject --reverse --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326
 
 ## usage
 

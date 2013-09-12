@@ -94,7 +94,15 @@ module.exports = {
 
     reproject: reproject,
 
-    toWgs84: function(geojson, proj) {
-      return reproject(geojson, proj, proj4node.WGS84);
+    reverse: function(geojson) {
+      return traverseGeoJson(geojson, function(gj) {
+        gj.coordinates = traverseCoords(gj.coordinates, function(xy) {
+          return [ xy[1], xy[0] ];
+        });
+      });
+    },
+
+    toWgs84: function(geojson, from) {
+      return reproject(geojson, from, proj4node.WGS84);
     }
 }

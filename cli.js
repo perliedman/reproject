@@ -15,5 +15,14 @@ for (var k in crss) {
 
 function openData(body) {
 	var geojson = JSON.parse(body.toString());
-	console.log(JSON.stringify(reproject.reproject(geojson, argv["from"], argv["to"], crss), null, 2));
+
+	if (argv["reverse"]) {
+		geojson = reproject.reverse(geojson);
+	}
+
+	if (argv["from"] || argv["to"]) {
+		geojson = reproject.reproject(geojson, argv["from"], argv["to"], crss)
+	}
+
+	console.log(JSON.stringify(geojson, null, 2));
 }
