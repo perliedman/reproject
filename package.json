@@ -19,9 +19,9 @@
   "author": "Per Liedman",
   "license": "MIT",
   "dependencies": {
-    "proj4node": "0.0.6",
     "minimist": "0.0.2",
-    "concat-stream": "~1.0.1"
+    "concat-stream": "~1.0.1",
+    "proj4js": "~1.3.4"
   },
   "devDependencies": {
     "expect.js": "~0.2.0",
