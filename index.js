@@ -1,4 +1,4 @@
-var proj4node = require('proj4node');
+var proj4 = require('proj4js');
 
 // Checks if `list` looks like a `[x, y]`.
 function isXY(list) {
@@ -75,6 +75,7 @@ function reproject(geojson, from, to, projs) {
   }
 
   to = determineCrs(to, projs);
+  var transform = proj4(from, to);
 
   return traverseGeoJson(geojson, function(gj) {
     // No easy way to put correct CRS info into the GeoJSON,
@@ -83,8 +84,7 @@ function reproject(geojson, from, to, projs) {
       delete gj.crs;
     }
     gj.coordinates = traverseCoords(gj.coordinates, function(xy) {
-      var coord = to.transform(from, { x:xy[0], y:xy[1] });
-      return [ coord.x, coord.y ];
+      return transform.forward(from, xy);
     });
   });
 }
@@ -103,6 +103,6 @@ module.exports = {
     },
 
     toWgs84: function(geojson, from) {
-      return reproject(geojson, from, proj4node.WGS84);
+      return reproject(geojson, from, proj4.WGS84);
     }
 }

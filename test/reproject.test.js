@@ -1,9 +1,9 @@
 var reproj = require('../'),
 	expect = require('expect.js'),
-	proj4node = require('proj4node');
+	proj4 = require('proj4js');
 
-var sweref99tm = proj4node('+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'),
-	rt90 = proj4node('+lon_0=15.808277777799999 +lat_0=0.0 +k=1.0 +x_0=1500000.0 +y_0=0.0 +proj=tmerc +ellps=bessel +units=m +towgs84=414.1,41.3,603.1,-0.855,2.141,-7.023,0 +no_defs'),
+var sweref99tm = proj4.Proj('+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'),
+	rt90 = proj4.Proj('+lon_0=15.808277777799999 +lat_0=0.0 +k=1.0 +x_0=1500000.0 +y_0=0.0 +proj=tmerc +ellps=bessel +units=m +towgs84=414.1,41.3,603.1,-0.855,2.141,-7.023,0 +no_defs'),
 	crss = {
 		"EPSG:3006": sweref99tm,
 		"EPSG:2400": rt90
