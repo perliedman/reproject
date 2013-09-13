@@ -55,3 +55,7 @@ reproject(geojson, from, proj4node.WGS84, crss)
 
 Detects the CRS defined in the given GeoJSON and returns the corresponding proj4node projection instance from
 crss. If no CRS is defined in the GeoJSON, or the defined CRS isn't present in **crss**, an error is thrown.
+
+### reverse(geojson)
+
+Reverses the axis order of the coordinates in the given GeoJSON, such that x becomes y and y becomes x.
