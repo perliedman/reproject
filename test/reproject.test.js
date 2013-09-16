@@ -1,3 +1,5 @@
+"use strict"
+
 var reproj = require('../'),
 	expect = require('expect.js'),
 	proj4node = require('proj4node');

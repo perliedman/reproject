@@ -1,3 +1,5 @@
+"use strict"
+
 var proj4node = require('proj4node');
 
 // Checks if `list` looks like a `[x, y]`.
