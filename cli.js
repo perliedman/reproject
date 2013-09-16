@@ -5,7 +5,14 @@ var concat = require('concat-stream'),
 	proj4 = require('proj4node'),
 	fs = require('fs'),
     argv = require('minimist')(process.argv.slice(2)),
-    crss = (argv['crs-defs'] ? require("./" + argv['crs-defs']) : {});
+    crss,
+    e;
+
+try {
+	crss = (argv['crs-defs'] ? loadJson(argv['crs-defs']) : {});
+} catch (e) {
+	process.exit(1);
+}
 
 for (var k in crss) {
 	crss[k] = proj4(crss[k]);
@@ -25,4 +32,22 @@ function openData(body) {
 	}
 
 	console.log(JSON.stringify(geojson, null, 2));
+}
+
+function loadJson(f) {
+	var data,
+		e;
+	try {
+		var data = fs.readFileSync(f, 'utf8')
+  	} catch (e) {
+  		console.log("Could not open file \"" + f + "\": " + e);
+  		throw e;
+  	}
+
+	try {
+  		return JSON.parse(data);
+  	} catch (e) {
+  		console.log("Could not parse JSON from file \"" + f + "\": " + e);
+  		throw e;
+  	}
 }
