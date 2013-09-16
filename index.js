@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 var proj4node = require('proj4node');
 

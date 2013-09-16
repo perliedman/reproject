@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 var reproj = require('../'),
 	expect = require('expect.js'),
