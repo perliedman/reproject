@@ -20,15 +20,11 @@ Options:
 * ```--use-spatialreference``` or ```--sr``` to use [spatialreference.org](http://spatialreference.org/) to look up
   any CRS definitions that aren't already known
 * ```--crs-defs=file``` to provide a JSON dictionary of known CRS definitions. A sample file of CRS definitions, crs-defs.json, is supplied.
-* ```--reverse``` to reverse the axis (swap x and y) before performing the reprojection.
+* ```--reverse``` to reverse the axis (swap x and y) before performing the reprojection
 
 reproject can be used together with for example [wellknown](https://github.com/mapbox/wellknown/) and [geojsonio-cli](https://github.com/mapbox/geojsonio-cli/):
 
     $ echo "POINT(319180 6399862)" | wellknown | reproject --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326 | geojsonio
-
-Sometimes your data has reversed the axis order such that x has become y and vice versa. reproject can help you get them in the correct order before transforming by using the **--reverse** argument:
-
-    $ echo '{"type":"Point","coordinates":[6399862, 319180]}' | reproject --reverse --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326
 
 ## usage
 
