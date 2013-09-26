@@ -11,9 +11,16 @@ install:
 
 use:
 
-    $ echo '{"type":"Point","coordinates":[319180, 6399862]}' | reproject --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326
+    $ echo '{"type":"Point","coordinates":[319180, 6399862]}' | reproject --use-spatialreference --from=EPSG:3006 --to=EPSG:4326
 
-A sample file of CRS definitions, crs-defs.json, is supplied. Its contents is a dictionary of CRS names to Proj4 definitions.
+Options:
+
+* ```--from=crs-name``` is the CRS to convert the GeoJSON from
+* ```--to=crs-name``` is the CRS to convert the GeoJSON to
+* ```--use-spatialreference``` or ```--sr``` to use [spatialreference.org](http://spatialreference.org/) to look up
+  any CRS definitions that aren't already known
+* ```--crs-defs=file``` to provide a JSON dictionary of known CRS definitions. A sample file of CRS definitions, crs-defs.json, is supplied.
+* ```--reverse``` to reverse the axis (swap x and y) before performing the reprojection.
 
 reproject can be used together with for example [wellknown](https://github.com/mapbox/wellknown/) and [geojsonio-cli](https://github.com/mapbox/geojsonio-cli/):
 
