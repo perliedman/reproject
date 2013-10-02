@@ -11,17 +11,20 @@ install:
 
 use:
 
-    $ echo '{"type":"Point","coordinates":[319180, 6399862]}' | reproject --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326
+    $ echo '{"type":"Point","coordinates":[319180, 6399862]}' | reproject --use-spatialreference --from=EPSG:3006 --to=EPSG:4326
 
-A sample file of CRS definitions, crs-defs.json, is supplied. Its contents is a dictionary of CRS names to Proj4 definitions.
+Options:
+
+* ```--from=crs-name``` is the CRS to convert the GeoJSON from
+* ```--to=crs-name``` is the CRS to convert the GeoJSON to
+* ```--use-spatialreference``` or ```--sr``` to use [spatialreference.org](http://spatialreference.org/) to look up
+  any CRS definitions that aren't already known
+* ```--crs-defs=file``` to provide a JSON dictionary of known CRS definitions. A sample file of CRS definitions, crs-defs.json, is supplied.
+* ```--reverse``` to reverse the axis (swap x and y) before performing the reprojection
 
 reproject can be used together with for example [wellknown](https://github.com/mapbox/wellknown/) and [geojsonio-cli](https://github.com/mapbox/geojsonio-cli/):
 
     $ echo "POINT(319180 6399862)" | wellknown | reproject --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326 | geojsonio
-
-Sometimes your data has reversed the axis order such that x has become y and vice versa. reproject can help you get them in the correct order before transforming by using the **--reverse** argument:
-
-    $ echo '{"type":"Point","coordinates":[6399862, 319180]}' | reproject --reverse --crs-defs=crs-defs.json --from=EPSG:3006 --to=EPSG:4326
 
 ## usage
 
@@ -55,3 +58,7 @@ reproject(geojson, from, proj4node.WGS84, crss)
 
 Detects the CRS defined in the given GeoJSON and returns the corresponding proj4node projection instance from
 crss. If no CRS is defined in the GeoJSON, or the defined CRS isn't present in **crss**, an error is thrown.
+
+### reverse(geojson)
+
+Reverses the axis order of the coordinates in the given GeoJSON, such that x becomes y and y becomes x.

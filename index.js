@@ -1,5 +1,6 @@
-var proj4 = require('proj4js');
+"use strict";
 
+var proj4 = require('proj4');
 // Checks if `list` looks like a `[x, y]`.
 function isXY(list) {
   return list.length === 2 &&
@@ -84,7 +85,7 @@ function reproject(geojson, from, to, projs) {
       delete gj.crs;
     }
     gj.coordinates = traverseCoords(gj.coordinates, function(xy) {
-      return transform.forward(from, xy);
+      return transform.forward(xy);
     });
   });
 }
