@@ -33,7 +33,7 @@ lookupCrs(argv.to, function(crs) {
 });
 
 function readStream() {
-	if (fromCrs && toCrs) {
+	if ((fromCrs && toCrs) || (!argv.from && !argv.to)) {
 		((argv._[0] && fs.createReadStream(argv._[0])) || process.stdin).pipe(concat(openData));
 	}
 }
@@ -45,7 +45,7 @@ function openData(body) {
 		geojson = reproject.reverse(geojson);
 	}
 
-	if (argv["from"] || argv["to"]) {
+	if (fromCrs && toCrs) {
 		geojson = reproject.reproject(geojson, fromCrs, toCrs, crss)
 	}
 
@@ -71,6 +71,11 @@ function loadJson(f) {
 }
 
 function lookupCrs(crsName, cb) {
+	if (!crsName) {
+		cb(null);
+		return;
+	}
+
 	if (!crss[crsName]) {
 		if (useSpatialReference) {
 			var crsPath = crsName.toLowerCase().replace(':', '/'),
