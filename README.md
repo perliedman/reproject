@@ -28,10 +28,11 @@ reproject can be used together with for example [wellknown](https://github.com/m
 
 ## usage
 
-reproject currently only works with node.js, since proj4node, which reproject relies on, does not play nice with
-for example browserify. Installation is easy with npm:
+Installation is easy with npm:
 
     npm install reproject
+
+It works well in the browser with for example [browserify](http://browserify.org/).
 
 ## api
 
