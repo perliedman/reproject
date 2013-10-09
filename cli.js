@@ -2,7 +2,7 @@
 
 var concat = require('concat-stream'),
 	reproject = require('./'),
-	proj4 = require('proj4node'),
+	proj4 = require('proj4'),
 	fs = require('fs'),
     argv = require('minimist')(process.argv.slice(2)),
     useSpatialReference = argv["sr"] || argv["use-spatialreference"],
