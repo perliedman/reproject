@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var proj4 = require('proj4');
 // Checks if `list` looks like a `[x, y]`.
@@ -7,7 +7,7 @@ function isXY(list) {
     typeof list[0] === 'number' &&
     typeof list[1] === 'number';
 }
- 
+
 function traverseCoords(coordinates, callback) {
   if (isXY(coordinates)) return callback(coordinates);
   return coordinates.map(function(coord){return traverseCoords(coord, callback);});
@@ -15,21 +15,21 @@ function traverseCoords(coordinates, callback) {
 
 // Simplistic shallow clone that will work for a normal GeoJSON object.
 function clone(obj) {
-  if (null == obj || "object" != typeof obj) return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-    }
-    return copy;
+  if (null == obj || 'object' !== typeof obj) return obj;
+  var copy = obj.constructor();
+  for (var attr in obj) {
+    if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+  }
+  return copy;
 }
 
 function traverseGeoJson(geojson, callback) {
   var r = clone(geojson);
-  if (geojson.type == 'Feature') {
+  if (geojson.type === 'Feature') {
     r.geometry = traverseGeoJson(geojson.geometry, callback);
-  } else if (geojson.type == 'FeatureCollection') {
+  } else if (geojson.type === 'FeatureCollection') {
     r.features = r.features.map(function(gj) { return traverseGeoJson(gj, callback); });
-  } else if (geojson.type == 'GeometryCollection') {
+  } else if (geojson.type === 'GeometryCollection') {
     r.geometries = r.geometries.map(function(gj) { return traverseGeoJson(gj, callback); });
   } else {
     callback(r);
@@ -39,29 +39,28 @@ function traverseGeoJson(geojson, callback) {
 }
 
 function detectCrs(geojson, projs) {
-  var crsInfo = geojson['crs'],
-      name,
+  var crsInfo = geojson.crs,
       crs;
 
   if (crsInfo === undefined) {
-    throw new Error("Unable to detect CRS, GeoJSON has no \"crs\" property.");
+    throw new Error('Unable to detect CRS, GeoJSON has no "crs" property.');
   }
 
-  if (crsInfo.type == 'name') {
+  if (crsInfo.type === 'name') {
     crs = projs[crsInfo.properties.name];
-  } else if (crsInfo.type == 'EPSG') {
-    crs = projs["EPSG:" + crsInfo.properties.code];
+  } else if (crsInfo.type === 'EPSG') {
+    crs = projs['EPSG:' + crsInfo.properties.code];
   }
 
   if (!crs) {
-    throw new Error("CRS defined in crs section could not be identified: " + JSON.stringify(crsInfo));
+    throw new Error('CRS defined in crs section could not be identified: ' + JSON.stringify(crsInfo));
   }
 
   return crs;
 }
 
 function determineCrs(crs, projs) {
-  if (typeof crs == 'string' || crs instanceof String) {
+  if (typeof crs === 'string' || crs instanceof String) {
     return projs[crs];
   }
 
@@ -106,4 +105,4 @@ module.exports = {
     toWgs84: function(geojson, from) {
       return reproject(geojson, from, proj4.WGS84);
     }
-}
+  };
