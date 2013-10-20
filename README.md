@@ -40,9 +40,9 @@ It works well in the browser with for example [browserify](http://browserify.org
 
 Reprojects the given GeoJSON from the CRS given in **from** to the CRS given in **to**.
 
-The from and to arguments can either be a proj4node projection object, or a string containing a CRS name. In
-the case of a CRS name, the proj4node projection instance is looked up using the **crss** argument. **crss**
-is assumed to be a dictionary of projection names to proj4node objects.
+The from and to arguments can either be a proj4 projection object, or a string containing a CRS name. In
+the case of a CRS name, the proj4 projection instance is looked up using the **crss** argument. **crss**
+is assumed to be a dictionary of projection names to proj4 objects.
 
 If from is left undefined or null, the CRS will be detected from the GeoJSON's crs property and looked up in the
 **crss** dictionary.
@@ -52,12 +52,12 @@ If from is left undefined or null, the CRS will be detected from the GeoJSON's c
 Shortcut equivalent to
 
 ```js
-reproject(geojson, from, proj4node.WGS84, crss)
+reproject(geojson, from, proj4.WGS84, crss)
 ```
 
 ### detectCrs(geojson, crss)
 
-Detects the CRS defined in the given GeoJSON and returns the corresponding proj4node projection instance from
+Detects the CRS defined in the given GeoJSON and returns the corresponding proj4 projection instance from
 crss. If no CRS is defined in the GeoJSON, or the defined CRS isn't present in **crss**, an error is thrown.
 
 ### reverse(geojson)
