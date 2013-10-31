@@ -1,4 +1,4 @@
-reproject
+reproject [![NPM version](https://badge.fury.io/js/reproject.png)](http://badge.fury.io/js/reproject)
 =========
 
 Takes GeoJSON in one projection/CRS and transforms, or reprojects, it to another.
