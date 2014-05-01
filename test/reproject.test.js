@@ -44,8 +44,6 @@ function assertCoords(actual, expected, precision) {
 }
 
 expect.Assertion.prototype.coordinate = function(obj, precision) {
-  precision = precision || 1e-5;
-
   this.assert(
     this.obj.length === 2 &&
     Math.abs(this.obj[0] - obj[0]) < precision &&
@@ -59,6 +57,8 @@ expect.Assertion.prototype.geojson = function(obj, coordPrecision) {
     copyObj = clone(obj),
     i;
 
+  coordPrecision = coordPrecision || 1e-5;
+
   delete copyThis.coordinates;
   delete copyObj.coordinates;
   delete copyThis.geometry;
@@ -67,6 +67,8 @@ expect.Assertion.prototype.geojson = function(obj, coordPrecision) {
   delete copyObj.geometries;
   delete copyThis.features;
   delete copyObj.features;
+  delete copyThis.bbox;
+  delete copyObj.bbox;
 
   expect(copyThis).to.eql(copyObj);
   if (obj.coordinates) {
@@ -83,6 +85,13 @@ expect.Assertion.prototype.geojson = function(obj, coordPrecision) {
   if (obj.features) {
     for (i = 0; i < obj.features.length; i++) {
       expect(this.obj.features[i]).to.be.geojson(obj.features[i], coordPrecision);
+    }
+  }
+  if (obj.bbox) {
+    for (i = 0; i < obj.bbox.length; i++) {
+      this.assert(Math.abs(this.obj.bbox[i] - obj.bbox[i]) < coordPrecision,
+        function() { return 'expected ' + this.obj.bbox + ' to be a bbox close to ' + obj.bbox + ' within +/-' + coordPrecision; },
+        function() { return 'expected ' + this.obj.bbox + ' to not be a bbox close to ' + obj.bbox + ' within +/-' + coordPrecision; });
     }
   }
 };
@@ -392,6 +401,45 @@ describe('reverse', function() {
               'type': 'LineString',
               'coordinates': [[6399862, 319180], [6400617, 319637]]
             },
+          }
+        ]
+      });
+    });
+  });
+  describe('bbox', function() {
+    it('geometrycollection', function() {
+      expect(reproj.toWgs84({
+        'type': 'GeometryCollection',
+        'bbox': [319180, 6399862, 319675, 6400617],
+        'geometries': [
+          {
+            'type': 'Point',
+            'coordinates': [319180, 6399862]
+          },
+          {
+            'type': 'LineString',
+            'coordinates': [[319180, 6399862], [319637, 6400617]]
+          },
+          {
+            'type': 'Polygon',
+            'coordinates': [[[319180, 6399862], [319637, 6400617], [319675, 6400239]]]
+          }
+        ]
+      }, sweref99tm)).to.be.geojson({
+        'type': 'GeometryCollection',
+        'bbox': [11.96526, 57.70451, 11.97327, 57.71146],
+        'geometries': [
+          {
+            'type': 'Point',
+            'coordinates': [11.96526, 57.70451]
+          },
+          {
+            'type': 'LineString',
+            'coordinates': [[11.96526, 57.70451], [11.97235, 57.71146]]
+          },
+          {
+            'type': 'Polygon',
+            'coordinates': [[[11.96526, 57.70451], [11.97235, 57.71146], [11.97327, 57.70808]]]
           }
         ]
       });

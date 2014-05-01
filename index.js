@@ -23,17 +23,20 @@ function clone(obj) {
   return copy;
 }
 
-function traverseGeoJson(geojson, callback) {
+function traverseGeoJson(geojson, leafCallback, nodeCallback) {
   var r = clone(geojson);
+
   if (geojson.type === 'Feature') {
-    r.geometry = traverseGeoJson(geojson.geometry, callback);
+    r.geometry = traverseGeoJson(geojson.geometry, leafCallback, nodeCallback);
   } else if (geojson.type === 'FeatureCollection') {
-    r.features = r.features.map(function(gj) { return traverseGeoJson(gj, callback); });
+    r.features = r.features.map(function(gj) { return traverseGeoJson(gj, leafCallback, nodeCallback); });
   } else if (geojson.type === 'GeometryCollection') {
-    r.geometries = r.geometries.map(function(gj) { return traverseGeoJson(gj, callback); });
+    r.geometries = r.geometries.map(function(gj) { return traverseGeoJson(gj, leafCallback, nodeCallback); });
   } else {
-    callback(r);
+    if (leafCallback) leafCallback(r);
   }
+
+  if (nodeCallback) nodeCallback(r);
 
   return r;
 }
@@ -86,6 +89,27 @@ function reproject(geojson, from, to, projs) {
     gj.coordinates = traverseCoords(gj.coordinates, function(xy) {
       return transform.forward(xy);
     });
+  }, function(gj) {
+    if (gj.bbox) {
+      // A bbox can't easily be reprojected, just reprojecting
+      // the min/max coords definitely will not work since
+      // the transform is not linear (in the general case).
+      // Workaround is to just re-compute the bbox after the
+      // transform.
+      gj.bbox = (function() {
+        var min = [Number.MAX_VALUE, Number.MAX_VALUE],
+            max = [-Number.MAX_VALUE, -Number.MAX_VALUE];
+        traverseGeoJson(gj, function(_gj) {
+          traverseCoords(_gj.coordinates, function(xy) {
+            min[0] = Math.min(min[0], xy[0]);
+            min[1] = Math.min(min[1], xy[1]);
+            max[0] = Math.max(max[0], xy[0]);
+            max[1] = Math.max(max[1], xy[1]);
+          });
+        });
+        return [min[0], min[1], max[0], max[1]];
+      })();
+    }
   });
 }
 
