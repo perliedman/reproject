@@ -1,7 +1,7 @@
 reproject [![Build status](https://travis-ci.org/perliedman/reproject.png)](https://travis-ci.org/perliedman/reproject) [![NPM version](https://badge.fury.io/js/reproject.png)](http://badge.fury.io/js/reproject)
 =========
 
-Takes GeoJSON in one projection/CRS and transforms, or reprojects, it to another.
+Transforms GeoJSON from one projection / CRS to another.
 
 ## cli
 
