@@ -3,7 +3,7 @@
 var proj4 = require('proj4');
 // Checks if `list` looks like a `[x, y]`.
 function isXY(list) {
-  return list.length === 2 &&
+  return list.length >= 2 &&
     typeof list[0] === 'number' &&
     typeof list[1] === 'number';
 }

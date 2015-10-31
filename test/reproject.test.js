@@ -286,6 +286,16 @@ describe('reproject', function() {
       'coordinates': [1271138, 6404230]
     }, 0.5);
   });
+
+  it('preserves altitude', function() {
+    expect(reproj.reproject({
+      'type': 'Point',
+      'coordinates': [319180, 6399862, 10]
+    }, sweref99tm, rt90)).to.be.geojson({
+      'type': 'Point',
+      'coordinates': [1271138, 6404230, 10]
+    }, 0.5);
+  });
 });
 
 describe('reverse', function() {
