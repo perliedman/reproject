@@ -21,7 +21,7 @@
   "dependencies": {
     "minimist": "0.0.2",
     "concat-stream": "~1.0.1",
-    "proj4": "~1.4.0"
+    "proj4": "^2.0.0"
   },
   "devDependencies": {
     "expect.js": "~0.2.0",
