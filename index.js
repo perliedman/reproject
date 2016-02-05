@@ -126,7 +126,7 @@ module.exports = {
       });
     },
 
-    toWgs84: function(geojson, from) {
-      return reproject(geojson, from, proj4.WGS84);
+    toWgs84: function(geojson, from, projs) {
+      return reproject(geojson, from, proj4.WGS84, projs);
     }
   };

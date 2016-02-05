@@ -214,6 +214,20 @@ describe('toWgs84', function() {
       });
     });
   });
+  describe('named projection', function() {
+    it('primitives', function() {
+      var projs = {
+          "EPSG:28992": proj4.Proj("+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +towgs84=565.237,50.0087,465.658,-0.406857,0.350733,-1.87035,4.0812 +units=m +no_defs")
+      };
+      expect(reproj.toWgs84({
+        type: 'Point',
+        coordinates: [520000, 1230000]
+      }, "EPSG:28992", projs)).to.be.geojson({
+        "type":"Point",
+        "coordinates":[11.70272,58.88793]
+      });
+    });
+  })
 });
 
 describe('detectCrs', function() {
