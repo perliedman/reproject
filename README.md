@@ -15,8 +15,8 @@ use:
 
 Options:
 
-* ```--from=crs-name``` is the CRS to convert the GeoJSON from
-* ```--to=crs-name``` is the CRS to convert the GeoJSON to
+* ```--from=crs-name``` is the CRS to convert the GeoJSON from; either a name from `crs-defs`, or a Proj4 CRS definition string
+* ```--to=crs-name``` is the CRS to convert the GeoJSON to; either a name from `crs-defs`, or a Proj4 CRS definition string
 * ```--use-spatialreference``` or ```--sr``` to use [spatialreference.org](http://spatialreference.org/) to look up
   any CRS definitions that aren't already known
 * ```--crs-defs=file``` to provide a JSON dictionary of known CRS definitions. A sample file of CRS definitions, crs-defs.json, is supplied.
@@ -40,7 +40,7 @@ It works well in the browser with for example [browserify](http://browserify.org
 
 Reprojects the given GeoJSON from the CRS given in **from** to the CRS given in **to**.
 
-The from and to arguments can either be a proj4 projection object, or a string containing a CRS name. In
+The from and to arguments can either be a proj4 projection object, a string containing a CRS name, or a Proj4 CRS definition string. In
 the case of a CRS name, the proj4 projection instance is looked up using the **crss** argument. **crss**
 is assumed to be a dictionary of projection names to proj4 objects.
 

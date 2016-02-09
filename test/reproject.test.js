@@ -4,12 +4,14 @@ var reproj = require('../'),
   expect = require('expect.js'),
   proj4 = require('proj4');
 
-var sweref99tm = proj4.Proj('+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'),
-  rt90 = proj4.Proj('+lon_0=15.808277777799999 +lat_0=0.0 +k=1.0 +x_0=1500000.0 +y_0=0.0 +proj=tmerc +ellps=bessel +units=m +towgs84=414.1,41.3,603.1,-0.855,2.141,-7.023,0 +no_defs'),
-  crss = {
-    'EPSG:3006': sweref99tm,
-    'EPSG:2400': rt90
-  };
+var sweref99tmWkt = '+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
+    rt90Wkt = '+lon_0=15.808277777799999 +lat_0=0.0 +k=1.0 +x_0=1500000.0 +y_0=0.0 +proj=tmerc +ellps=bessel +units=m +towgs84=414.1,41.3,603.1,-0.855,2.141,-7.023,0 +no_defs',
+    sweref99tm = proj4.Proj(sweref99tmWkt),
+    rt90 = proj4.Proj(rt90Wkt),
+    crss = {
+      'EPSG:3006': sweref99tm,
+      'EPSG:2400': rt90
+    };
 
 // Simplistic shallow clone that will work for a normal GeoJSON object.
 function clone(obj) {
@@ -255,6 +257,16 @@ describe('detectCrs', function() {
 });
 
 describe('reproject', function() {
+  it('handles WKT projection strings', function () {
+    expect(reproj.reproject({
+      'type': 'Point',
+      'coordinates': [319180, 6399862]
+    }, sweref99tmWkt, rt90Wkt)).to.be.geojson({
+      'type': 'Point',
+      'coordinates': [1271138, 6404230]
+    }, 0.5);
+  });
+
   it('epsg:3006->epsg:2400', function() {
     expect(reproj.reproject({
       'type': 'Point',

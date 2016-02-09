@@ -64,13 +64,14 @@ function detectCrs(geojson, projs) {
 
 function determineCrs(crs, projs) {
   if (typeof crs === 'string' || crs instanceof String) {
-    return projs[crs];
+    return projs[crs] || proj4.Proj(crs);
   }
 
   return crs;
 }
 
 function reproject(geojson, from, to, projs) {
+  projs = projs || {};
   if (!from) {
     from = detectCrs(geojson, projs);
   } else {
