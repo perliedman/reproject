@@ -322,6 +322,14 @@ describe('reproject', function() {
       'coordinates': [1271138, 6404230, 10]
     }, 0.5);
   });
+
+  it('handles null geometry', function() {
+    var gj = {
+      'type': 'Feature',
+      'geometry': null
+    };
+    expect(reproj.reproject(gj, sweref99tm, rt90)).to.be.geojson(gj, 0);
+  })
 });
 
 describe('reverse', function() {

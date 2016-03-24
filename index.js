@@ -24,6 +24,8 @@ function clone(obj) {
 }
 
 function traverseGeoJson(geojson, leafCallback, nodeCallback) {
+  if (geojson == null) return geojson;
+
   var r = clone(geojson);
 
   if (geojson.type === 'Feature') {
