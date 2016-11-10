@@ -3,6 +3,15 @@ reproject [![Build status](https://travis-ci.org/perliedman/reproject.png)](http
 
 Transforms GeoJSON from one projection / CRS to another.
 
+According to the latest [GeoJSON spec (RFC 7946)](https://tools.ietf.org/html/rfc7946#section-4), GeoJSON coordinates should be assumed to be in WGS84, but sometimes it's useful to use other CRS anyway, and the spec actually leaves some room for this:
+
+> However, where all
+> involved parties have a prior arrangement, alternative coordinate
+> reference systems can be used without risk of data being
+> misinterpreted.
+
+Reproject lets you either explicitly specify a GeoJSON's CRS, or use the conventions from the earlier GeoJSON spec: [GeoJSON 2008](http://geojson.org/geojson-spec.html#coordinate-reference-system-objects).
+
 ## cli
 
 install:
