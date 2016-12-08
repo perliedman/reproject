@@ -64,6 +64,13 @@ Shortcut equivalent to
 reproject(geojson, from, proj4.WGS84, crss)
 ```
 
+For a fully automatic "convert almost any common projection to lat/lon", try this:
+
+```js
+var epsg = require('epsg');
+toWgs84(geojson, undefined, epsg);
+```
+
 ### detectCrs(geojson, crss)
 
 Detects the CRS defined in the given GeoJSON and returns the corresponding proj4 projection instance from
