@@ -1,6 +1,8 @@
 reproject [![Build status](https://travis-ci.org/perliedman/reproject.png)](https://travis-ci.org/perliedman/reproject) [![NPM version](https://badge.fury.io/js/reproject.png)](http://badge.fury.io/js/reproject)
 =========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/perliedman/reproject.svg)](https://greenkeeper.io/)
+
 Transforms GeoJSON from one projection / CRS to another.
 
 According to the latest [GeoJSON spec (RFC 7946)](https://tools.ietf.org/html/rfc7946#section-4), GeoJSON coordinates should be assumed to be in WGS84, but sometimes it's useful to use other CRS anyway, and the spec actually leaves some room for this:
