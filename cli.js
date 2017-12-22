@@ -6,6 +6,7 @@ var concat = require('concat-stream'),
     fs = require('fs'),
     argv = require('minimist')(process.argv.slice(2)),
     useSpatialReference = argv["sr"] || argv["use-spatialreference"],
+    useEpsgIo = argv["espgio"] || argv["use-epsg-io"],
     http = require('http'),
     crss,
     fromCrs,
@@ -76,26 +77,30 @@ function lookupCrs(crsName, cb) {
 
     if (!crss[crsName]) {
         if (useSpatialReference) {
-            var crsPath = crsName.toLowerCase().replace(':', '/'),
-                url = "http://www.spatialreference.org/ref/"+ crsPath + "/proj4/",
-                crsDef = '';
-
-            http.get(url, function(res) {
-                if (res.statusCode != 200) {
-                    throw new Error("spatialreference.org responded with HTTP " + res.statusCode +
-                        " when looking up \"" + crsName + "\".");
-                }
-                res.on('data', function(chunk) {
-                    crsDef += chunk;
-                }).on('end', function() {
-                    crss[crsName] = proj4(crsDef);
-                    cb(crss[crsName]);
-                });
-            });
+            var crsPath = crsName.toLowerCase().replace(':', '/');
+            getCrs(crsName, "http://www.spatialreference.org/ref/"+ crsPath + "/proj4/", cb);
+        } else if (useEpsgIo) {
+            getCrs(crsName, "http://epsg.io/" + crsName.split(":")[1] + ".proj4", cb);
         } else {
             throw new Error("Could not find definition for CRS \"" + crsName + "\".");
         }
     } else {
         cb(crss[crsName]);
     }
+}
+
+function getCrs(crsName, url, cb) {
+    var crsDef = '';
+    http.get(url, function(res) {
+        if (res.statusCode != 200) {
+            throw new Error("spatialreference.org responded with HTTP " + res.statusCode +
+                " when looking up \"" + crsName + "\".");
+        }
+        res.on('data', function(chunk) {
+            crsDef += chunk;
+        }).on('end', function() {
+            crss[crsName] = proj4(crsDef);
+            cb(crss[crsName]);
+        });
+    });
 }
