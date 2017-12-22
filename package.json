@@ -19,8 +19,9 @@
   "author": "Per Liedman",
   "license": "MIT",
   "dependencies": {
-    "minimist": "^1.2.0",
     "concat-stream": "^1.5.1",
+    "geojson-stream": "0.0.1",
+    "minimist": "^1.2.0",
     "proj4": "^2.3.12"
   },
   "devDependencies": {

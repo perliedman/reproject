@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var concat = require('concat-stream'),
+var geojsonStream = require('geojson-stream'),
     reproject = require('./'),
     proj4 = require('proj4'),
     fs = require('fs'),
@@ -34,22 +34,39 @@ lookupCrs(argv.to, function(crs) {
 
 function readStream() {
     if ((fromCrs && toCrs) || (!argv.from && !argv.to)) {
-        ((argv._[0] && fs.createReadStream(argv._[0])) || process.stdin).pipe(concat(openData));
+        ((argv._[0] && fs.createReadStream(argv._[0])) || process.stdin).pipe(geojsonStream.parse())
+            .on('header', openData)
+            .on('footer', openData)
+            .on('data', openData)
+            .on('error', function (err) {
+                console.error(err);
+            });
     }
 }
 
-function openData(body) {
-    var geojson = JSON.parse(body.toString());
+function openData(geojson) {
+    // geojson-stream will break a FeaturesCollection's features into chunks that are fed to openData;
+    // single geometries or GeometryCollection will be fed to as "header", so
+    // we have to handle them here.
+    if (geojson) {
+        var isGeomCol = geojson.type === 'GeometryCollection' && geojson.geometries;
+        var isFeature = geojson.type === 'Feature' && geojson.geometry;
+        var isGeometry = geojson.coordinates;
 
-    if (argv["reverse"]) {
-        geojson = reproject.reverse(geojson);
+        if (isGeomCol || isFeature || isGeometry) {
+            if (argv["reverse"]) {
+                geojson = reproject.reverse(geojson);
+            }
+
+            geojson = reproject.reproject(geojson, fromCrs, toCrs, crss);
+        }
     }
 
-    if (fromCrs && toCrs) {
-        geojson = reproject.reproject(geojson, fromCrs, toCrs, crss);
-    }
+    outputJson(geojson);
+}
 
-    console.log(JSON.stringify(geojson, null, 2));
+function outputJson(json) {
+    console.log(JSON.stringify(json, null, 2));
 }
 
 function loadJson(f) {
