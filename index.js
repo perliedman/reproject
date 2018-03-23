@@ -1,6 +1,6 @@
 'use strict';
 
-var proj4 = require('proj4');
+var proj4 = require('proj4').default;
 // Checks if `list` looks like a `[x, y]`.
 function isXY(list) {
   return list.length >= 2 &&
