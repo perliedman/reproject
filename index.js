@@ -1,6 +1,7 @@
 'use strict';
 
-var proj4 = require('proj4').default;
+
+var proj4 = require('proj4').hasOwnProperty('default') ? require('proj4').default : require('proj4');
 // Checks if `list` looks like a `[x, y]`.
 function isXY(list) {
   return list.length >= 2 &&
@@ -30,7 +31,7 @@ function traverseGeoJson(geometryCb, nodeCb, geojson) {
   var self = traverseGeoJson.bind(this, geometryCb, nodeCb);
 
   switch (geojson.type) {
-  case 'Feature':    
+  case 'Feature':
     r.geometry = self(geojson.geometry);
     break;
   case 'FeatureCollection':
