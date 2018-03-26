@@ -1,6 +1,5 @@
 'use strict';
 
-
 var proj4 = require('proj4').hasOwnProperty('default') ? require('proj4').default : require('proj4');
 // Checks if `list` looks like a `[x, y]`.
 function isXY(list) {
