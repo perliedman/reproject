@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var geojsonStream = require('geojson-stream'),
+    es = require('event-stream'),
     reproject = require('./'),
     proj4 = require('proj4'),
     fs = require('fs'),
@@ -34,20 +35,30 @@ lookupCrs(argv.to, function(crs) {
 
 function readStream() {
     if ((fromCrs && toCrs) || (!argv.from && !argv.to)) {
-        ((argv._[0] && fs.createReadStream(argv._[0])) || process.stdin).pipe(geojsonStream.parse())
-            .on('header', openData)
-            .on('footer', openData)
-            .on('data', openData)
-            .on('error', function (err) {
-                console.error(err);
-            });
+        var inputStream = ((argv._[0] && fs.createReadStream(argv._[0])) || process.stdin)
+        var parser = geojsonStream.parse()
+            .on('header', handleHeader)
+        var transformStream = es.mapSync(transform)
+        var outputStream = geojsonStream.stringify()
+
+        inputStream.pipe(parser)
+        parser.pipe(transformStream)
+        transformStream.pipe(outputStream)
+        outputStream.pipe(process.stdout)
     }
 }
 
-function openData(geojson) {
-    // geojson-stream will break a FeaturesCollection's features into chunks that are fed to openData;
-    // single geometries or GeometryCollection will be fed to as "header", so
-    // we have to handle them here.
+function handleHeader(geojson) {
+    if (geojson && geojson.type !== 'FeatureCollection') {
+        // If top type isn't FeatureCollection, just transform the whole object in one pass and be done with it;
+        // if we don't do this, geojson-stream will still output a FeatureCollection header, so the output
+        // GeoJSON's structure will not match the input's.
+        process.stdout.write(JSON.stringify(transform(geojson)));
+        process.exit(0);
+    }
+}
+
+function transform(geojson) {
     if (geojson) {
         var isGeomCol = geojson.type === 'GeometryCollection' && geojson.geometries;
         var isFeature = geojson.type === 'Feature' && geojson.geometry;
@@ -58,15 +69,11 @@ function openData(geojson) {
                 geojson = reproject.reverse(geojson);
             }
 
-            geojson = reproject.reproject(geojson, fromCrs, toCrs, crss);
+            return reproject.reproject(geojson, fromCrs, toCrs, crss);
         }
     }
 
-    outputJson(geojson);
-}
-
-function outputJson(json) {
-    console.log(JSON.stringify(json, null, 2));
+    return geojson
 }
 
 function loadJson(f) {
