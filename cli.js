@@ -100,6 +100,17 @@ function lookupCrs(crsName, cb) {
     }
 
     if (!crss[crsName]) {
+        var proj;
+        try {
+            proj = proj4(crsName);
+        } catch (e) {
+            // Ok, go on with proj unset.
+        }
+
+        if (proj) {
+            return cb(proj);
+        }
+
         if (useSpatialReference) {
             var crsPath = crsName.toLowerCase().replace(':', '/');
             getCrs(crsName, "http://www.spatialreference.org/ref/"+ crsPath + "/proj4/", cb);
