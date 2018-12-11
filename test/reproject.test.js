@@ -320,13 +320,13 @@ describe('reproject', function() {
     }, 0.5);
   });
 
-  it('preserves altitude', function() {
+  it('transforms altitude', function() {
     expect(reproj.reproject({
       'type': 'Point',
       'coordinates': [319180, 6399862, 10]
     }, sweref99tm, rt90)).to.be.geojson({
       'type': 'Point',
-      'coordinates': [1271138, 6404230, 10] // actually it's returning [..., -38.2270]
+      'coordinates': [1271138, 6404230, -38.2270]
     }, 0.5);
   });
 
