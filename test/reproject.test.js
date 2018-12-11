@@ -23,11 +23,12 @@ function clone(obj) {
   return copy;
 }
 
-// Checks if `list` looks like a `[x, y]`.
-function isXY(list) {
-  return list.length === 2 &&
+// Checks if `list` looks like a `[x, y]` or `[x, y, z]`.
+function isCoordinate(list) {
+  return (list.length === 2 || list.length === 3) &&
     typeof list[0] === 'number' &&
-    typeof list[1] === 'number';
+    typeof list[1] === 'number' && 
+    (list.length === 3 ? typeof list[2] === 'number' : true);
 }
 
 // Move recursively through nested lists and call `callback` for each `[x,y]`.
@@ -35,7 +36,7 @@ function isXY(list) {
 // This is slower and more memory consuming then `transformInplace` but returns
 // a new `Array`.
 function assertCoords(actual, expected, precision) {
-  if (isXY(expected)) {
+  if (isCoordinate(expected)) {
     expect(actual).to.be.coordinate(expected, precision);
   } else {
     expect(actual.length).to.be(expected.length);
@@ -46,12 +47,18 @@ function assertCoords(actual, expected, precision) {
 }
 
 expect.Assertion.prototype.coordinate = function(obj, precision) {
+  this.assert(this.obj.length === 2 || this.obj.length === 3);
   this.assert(
-    this.obj.length === 2 &&
     Math.abs(this.obj[0] - obj[0]) < precision &&
     Math.abs(this.obj[1] - obj[1]) < precision,
     function() { return 'expected ' + this.obj + ' to be a coordinate close to ' + obj + ' within +/-' + precision; },
     function() { return 'expected ' + this.obj + ' to not be a coordinate close to ' + obj + ' within +/-' + precision; });
+  if (this.obj.length === 3) {
+    this.assert(
+      Math.abs(this.obj[2] - obj[2]) < precision,
+      function() { return 'expected ' + this.obj[2] + ' to be an elevation close to ' + obj[2] + ' within +/-' + precision; },
+      function() { return 'expected ' + this.obj[2] + ' to not be an elevation close to ' + obj[2] + ' within +/-' + precision; });
+  }
 };
 
 expect.Assertion.prototype.geojson = function(obj, coordPrecision) {
@@ -319,7 +326,17 @@ describe('reproject', function() {
       'coordinates': [319180, 6399862, 10]
     }, sweref99tm, rt90)).to.be.geojson({
       'type': 'Point',
-      'coordinates': [1271138, 6404230, 10]
+      'coordinates': [1271138, 6404230, 10] // actually it's returning [..., -38.2270]
+    }, 0.5);
+  });
+
+  it('preserves altitude in WGS84', function() { 
+    expect(reproj.reproject({
+      'type': 'Point',
+      'coordinates': [319180, 6399862, 10]
+    }, sweref99tm, proj4.WGS84)).to.be.geojson({
+      'type': 'Point',
+      'coordinates': [11.965, 57.704, 10]
     }, 0.5);
   });
 
