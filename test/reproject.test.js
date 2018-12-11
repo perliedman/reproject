@@ -323,6 +323,17 @@ describe('reproject', function() {
     }, 0.5);
   });
 
+  it('preserves altitude in WGS84', function() {
+    expect(reproj.reproject({
+      'type': 'Point',
+      'coordinates': [319180, 6399862, 10]
+    }, sweref99tm, reproj.wgs84)).to.be.geojson({
+      'type': 'Point',
+      'coordinates': [1271138, 6404230, 10]
+    }, 0.5);
+  });
+
+
   it('handles null geometry', function() {
     var gj = {
       'type': 'Feature',

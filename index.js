@@ -101,7 +101,17 @@ function reproject(geojson, from, to, projs) {
   }
 
   to = determineCrs(to, projs);
-  var transform = proj4(from, to).forward.bind(transform);
+  
+  var transformFunc = proj4(from, to).forward.bind(transformFunc);
+
+  function transform(coords) {
+    var transformed = transformFunc(coords);
+    if (coords.length === 3 && coords[2] !== undefined && transformed[2] === undefined) {
+      // If the projection doesn't explicitly handle Z coordinate, retain the old one.
+      transformed[2] = coords[2];
+    }
+    return transformed;
+  }
 
   var transformGeometryCoords = function(gj) {
     // No easy way to put correct CRS info into the GeoJSON,
