@@ -19,7 +19,7 @@
   "author": "Per Liedman",
   "license": "MIT",
   "dependencies": {
-    "concat-stream": "^1.5.1",
+    "concat-stream": "^2.0.0",
     "event-stream": "^3.3.4",
     "geojson-stream": "0.0.1",
     "minimist": "^1.2.0",
