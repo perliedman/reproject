@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "concat-stream": "^2.0.0",
-    "event-stream": "^3.3.4",
+    "event-stream": "^4.0.0",
     "geojson-stream": "0.1.0",
     "minimist": "^1.2.0",
     "proj4": "^2.4.4"
