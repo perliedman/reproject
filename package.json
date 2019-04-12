@@ -1,11 +1,12 @@
 {
   "name": "reproject",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Reproject GeoJSON from one projection/CRS to another",
   "repository": "git@github.com:perliedman/reproject.git",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha -R spec",
+    "bundle": "rollup -c"
   },
   "bin": {
     "reproject": "cli.js"
@@ -19,14 +20,17 @@
   "author": "Per Liedman",
   "license": "MIT",
   "dependencies": {
-    "concat-stream": "^1.5.1",
+    "concat-stream": "^2.0.0",
     "event-stream": "^4.0.0",
-    "geojson-stream": "0.0.1",
+    "geojson-stream": "0.1.0",
     "minimist": "^1.2.0",
     "proj4": "^2.4.4"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
-    "mocha": "^5.0.0"
+    "mocha": "^6.1.3",
+    "rollup": "^1.1.2",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-terser": "^4.0.3"
   }
 }
