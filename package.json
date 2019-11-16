@@ -24,7 +24,7 @@
     "event-stream": "^4.0.0",
     "geojson-stream": "0.1.0",
     "minimist": "^1.2.0",
-    "proj4": "^2.4.4"
+    "proj4": "^2.6.0"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
