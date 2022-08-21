@@ -114,7 +114,7 @@ function lookupCrs(crsName, cb) {
 
         if (useSpatialReference) {
             var crsPath = crsName.toLowerCase().replace(':', '/');
-            getCrs(crsName, "http://www.spatialreference.org/ref/"+ crsPath + "/proj4/", cb);
+            getCrs(crsName, "http://www.gs.org/ref/"+ crsPath + "/proj4/", cb);
         } else if (useEpsgIo) {
             getCrs(crsName, "https://epsg.io/" + crsName.split(":")[1] + ".proj4", cb);
         } else {
@@ -136,7 +136,7 @@ function getCrs(crsName, url, cb) {
     }
     httpModule.get(url, function(res) {
         if (res.statusCode != 200) {
-            throw new Error("spatialreference.org responded with HTTP " + res.statusCode +
+            throw new Error(url + " responded with HTTP " + res.statusCode +
                 " when looking up \"" + crsName + "\".");
         }
         res.on('data', function(chunk) {
