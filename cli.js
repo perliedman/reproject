@@ -9,6 +9,7 @@ var geojsonStream = require('geojson-stream'),
     useSpatialReference = argv["sr"] || argv["use-spatialreference"],
     useEpsgIo = argv["eio"] || argv["use-epsg-io"],
     http = require('http'),
+    https = require('https'),
     crss,
     fromCrs,
     toCrs;
@@ -115,7 +116,7 @@ function lookupCrs(crsName, cb) {
             var crsPath = crsName.toLowerCase().replace(':', '/');
             getCrs(crsName, "http://www.spatialreference.org/ref/"+ crsPath + "/proj4/", cb);
         } else if (useEpsgIo) {
-            getCrs(crsName, "http://epsg.io/" + crsName.split(":")[1] + ".proj4", cb);
+            getCrs(crsName, "https://epsg.io/" + crsName.split(":")[1] + ".proj4", cb);
         } else {
             throw new Error("Could not find definition for CRS \"" + crsName + "\".");
         }
@@ -126,7 +127,14 @@ function lookupCrs(crsName, cb) {
 
 function getCrs(crsName, url, cb) {
     var crsDef = '';
-    http.get(url, function(res) {
+    var httpModule;
+    // OMG.. kill me now please. It's a miracle that anything get done when we have to manage this ourself in 2022...
+    if (url.startsWith("https://")) {
+        httpModule = https;
+    } else {
+        httpModule = http;
+    }
+    httpModule.get(url, function(res) {
         if (res.statusCode != 200) {
             throw new Error("spatialreference.org responded with HTTP " + res.statusCode +
                 " when looking up \"" + crsName + "\".");
