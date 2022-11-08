@@ -1,6 +1,6 @@
 {
   "name": "reproject",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Reproject GeoJSON from one projection/CRS to another",
   "repository": "git@github.com:perliedman/reproject.git",
   "main": "index.js",
